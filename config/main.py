@@ -9626,12 +9626,11 @@ def del_vnet_route(ctx, vnet_name, prefix):
         click.echo("All routes deleted for the VNET {}.".format(vnet_name))
 
 
-
-
 @config.group()
 def tx_error_monitor():
     """Configuring tx error monitor"""
     pass
+
 
 @tx_error_monitor.command('set')
 @click.option('--poll_interval', type=int, help='Polling interval in seconds') 
@@ -9645,28 +9644,19 @@ def configure_tx_error_monitor(ctx, poll_interval, threshold):
         return
 
     config_db = ctx.obj.cfgdb
-
     config = config_db.get_entry('TX_ERROR_MONITOR', 'global')
-    if not config:
-        # Initialize with defaults if table doesn't exist
-        config = {
-            'poll_interval': '10',
-            'threshold': '10'
-        }
-
-    new_config = config.copy()
 
     if poll_interval is not None:
         if poll_interval <= 0:
             ctx.fail("Poll interval must be greater than 0")
-        new_config['poll_interval'] = str(poll_interval)
+        config['poll_interval'] = str(poll_interval)
 
     if threshold is not None:
         if threshold <= 0:
             ctx.fail("Threshold must be greater than 0")
-        new_config['threshold'] = str(threshold)
-
-    config_db.set_entry('TX_ERROR_MONITOR', 'global', new_config)
+        config['threshold'] = str(threshold)
+        
+    config_db.set_entry('TX_ERROR_MONITOR', 'global', config)
 
 
 if __name__ == '__main__':

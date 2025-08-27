@@ -2827,30 +2827,18 @@ def banner(db):
 @cli.command()
 def tx_error_monitor():
     """Show tx error monitor configuration"""
+    
     config_db = ConfigDBConnector()
     config_db.connect()
     header = ['Poll Interval', 'Threshold']
     body =[]
 
     table_dict = config_db.get_entry('TX_ERROR_MONITOR', 'global')  
-
-    if not table_dict:
-        # Initialize table with default values
-        default_config = {
-            'poll_interval': '10',
-            'threshold': '10'
-        }
-        config_db.set_entry('TX_ERROR_MONITOR', 'global', default_config)
-        table_dict = default_config
-        click.echo("TX error monitor initialized with default configuration")
-
     body.append([
         table_dict.get('poll_interval', ''),
         table_dict.get('threshold', '')
     ])
-
     click.echo(tabulate(body, header, tablefmt='grid', missingval=''))
-
 
 
 @cli.command()
@@ -2881,7 +2869,6 @@ def tx_error_state():
     if not body:
         click.echo("No tx error state found")
         return
-
     click.echo(tabulate(body, header, tablefmt='grid', missingval=''))
 
 
